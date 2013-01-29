@@ -1,0 +1,49 @@
+# mina-sidekiq
+
+mina-sidekiq is a gem that adds tasks to aid in the deployment of [Sidekiq] (http://mperham.github.com/sidekiq/)
+using [Mina] (http://nadarei.co/mina).
+
+# Getting Start
+
+## Installation
+
+    gem install mina-sidekiq
+
+## Example
+
+    require 'mina-sidekiq'
+    ...
+
+    task :deploy => :enviroment do
+      deploy do
+        # stop accepting new workers
+        invoke :'sidekiq:quiet'
+        invoke :'git:clone'
+        ...
+
+        to :launch do
+          ...
+          invoke :'sidekiq:restart'
+        end
+      end
+    end
+
+## Available Tasks
+
+* sidekiq:stop
+* sidekiq:start
+* sidekiq:restart
+* sidekiq:quiet
+
+## Available Options
+
+* sidekiq: Sets the path to sidekiq.
+* sidekiqctl: Sets the path to sidekiqctl.
+* sidekiq\_timeout: Sets a upper limit of time a worker is allowed to finish, before it is killed.
+* sidekiq\_log: Sets the path to the log file of sidekiq
+* sidekiq\_pid: Sets the path to the pid file of a sidekiq worker
+
+## Copyright
+
+Copyright (c) 2013 Jörg Thalheim http://higgsboson.tk/joerg
+See LICENSE for further details.
