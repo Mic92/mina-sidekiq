@@ -1,1 +1,3 @@
-require "mina-sidekiq/sidekiq"
+module MinaSidekiq
+  autoload :Sidekiq, "mina-sidekiq/sidekiq"
+end
