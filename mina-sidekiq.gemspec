@@ -7,7 +7,8 @@ Gem::Specification.new do |s|
   s.email = ["joerg@higgsboson.tk"]
   s.homepage = "http://github.com/Mic92/mina-sidekiq"
   s.summary = "Tasks to deploy Sidekiq with mina."
-  s.description = "Tasks to deploy Sidekiq with mina."
+  s.description = "Adds tasks to aid in the deployment of Sidekiq"
+  s.license = 'MIT'
 
   s.files = `git ls-files`.split("\n")
   s.test_files = `git ls-files -- {test,spec,features}/*`.split("\n")
