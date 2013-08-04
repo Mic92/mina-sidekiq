@@ -2,7 +2,7 @@
 # Adds settings and tasks for managing Sidekiq workers.
 #
 # ## Usage example
-#     require 'mina/sidekiq'
+#     require 'mina-sidekiq/sidekiq'
 #     ...
 #
 #     task :deploy => :enviroment do
