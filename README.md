@@ -12,7 +12,9 @@ using [Mina] (http://nadarei.co/mina).
 
 ## Example
 
-    require 'mina-sidekiq'
+## Usage example
+
+    require 'mina-sidekiq/tasks'
     ...
 
     task :deploy => :enviroment do
