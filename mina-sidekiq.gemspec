@@ -1,6 +1,6 @@
 # -*- encoding: utf-8 -*-
 
-require "./lib/mina-sidekiq/version.rb"
+require "./lib/mina_sidekiq/version.rb"
 
 Gem::Specification.new do |s|
   s.name = "mina-sidekiq"
