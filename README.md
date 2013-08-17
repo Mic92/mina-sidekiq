@@ -14,7 +14,7 @@ using [Mina] (http://nadarei.co/mina).
 
 ## Usage example
 
-    require 'mina-sidekiq/tasks'
+    require 'mina_sidekiq/tasks'
     ...
 
     task :deploy => :enviroment do

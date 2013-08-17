@@ -17,7 +17,7 @@ Gem::Specification.new do |s|
   s.executables = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.require_paths = ["lib"]
   s.post_install_message = "Starting with 0.2.1, you have to add:
-  require 'mina-sidekiq/tasks'
+  require 'mina_sidekiq/tasks'
 in your deploy.rb to load the library"
 
   s.add_runtime_dependency "mina"

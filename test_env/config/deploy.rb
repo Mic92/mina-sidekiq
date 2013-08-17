@@ -1,6 +1,6 @@
 require 'mina'
 require 'mina/git'
-require 'mina-sidekiq'
+require 'mina-sidekiq/tasks'
 require 'mina/git'
 require 'mina/bundler'
 require 'mina/rvm'
