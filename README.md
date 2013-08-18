@@ -60,6 +60,17 @@ using [Mina] (http://nadarei.co/mina).
 | *sidekiq\_pid*      | Sets the path to the pid file of a sidekiq worker.                             |
 | *sidekiq_processes* | Sets the number of sidekiq processes launched.                                 |
 
+## Testing
+
+To run the full blown test suite use:
+
+    bundle exec rake test
+
+For faster release cycle use
+
+    cd test_env
+    bundle exec mina deploy --verbose
+
 ## Copyright
 
 Copyright (c) 2013 Jörg Thalheim http://higgsboson.tk/joerg
