@@ -48,7 +48,7 @@ set_default :sidekiq_config, "./config/sidekiq.yml"
 # Sets the path to the log file of sidekiq
 #
 # To disable logging set it to "/dev/null"
-set_default :sidekiq_log, "./log/sidekiq.log"
+set_default :sidekiq_log, lambda { "#{deploy_to}/#{current_path}/log/sidekiq.log" }
 
 # ### sidekiq_pid
 # Sets the path to the pid file of a sidekiq worker
