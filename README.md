@@ -16,8 +16,12 @@ using [Mina] (http://nadarei.co/mina).
 
     require 'mina_sidekiq/tasks'
     ...
+    task :setup do
+      # sidekiq needs a place to store its pid file
+      queue! %[mkdir -p "#{deploy_to}/shared/pids/"]
+    end
 
-    task :deploy => :enviroment do
+    task :deploy do
       deploy do
         # stop accepting new workers
         invoke :'sidekiq:quiet'

@@ -4,8 +4,12 @@
 # ## Usage example
 #     require 'mina_sidekiq/tasks'
 #     ...
+#     task :setup do
+#       # sidekiq needs a place to store its pid file
+#       queue! %[mkdir -p "#{deploy_to}/shared/pids/"]
+#     end
 #
-#     task :deploy => :environment do
+#     task :deploy do
 #       deploy do
 #         invoke :'sidekiq:quiet'
 #         invoke :'git:clone'
