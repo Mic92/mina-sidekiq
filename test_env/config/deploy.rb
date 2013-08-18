@@ -8,6 +8,8 @@ require 'fileutils'
 
 FileUtils.mkdir_p "#{Dir.pwd}/deploy"
 
+set :ssh_options, '-o StrictHostKeyChecking=no'
+
 set :domain, 'localhost'
 set :deploy_to, "#{Dir.pwd}/deploy"
 set :repository, 'https://github.com/Mic92/mina-sidekiq-test-rails.git'
