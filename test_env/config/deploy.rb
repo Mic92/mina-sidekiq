@@ -14,6 +14,9 @@ set :domain, 'localhost'
 set :deploy_to, "#{Dir.pwd}/deploy"
 set :repository, 'https://github.com/Mic92/mina-sidekiq-test-rails.git'
 set :keep_releases, 2
+set :sidekiq_processes, 2
+
+set :shared_paths, ['log']
 
 task :environment do
   invoke :'rvm:use[ruby-2.0.0]'
@@ -21,11 +24,13 @@ end
 
 task :setup => :environment do
   queue! %[mkdir -p "#{deploy_to}/shared/pids/"]
+  queue! %[mkdir -p "#{deploy_to}/shared/log/"]
 end
 
 task :deploy => :environment do
   deploy do
     invoke :'git:clone'
+    invoke :'deploy:link_shared_paths'
     invoke :'bundle:install'
 
     to :launch do

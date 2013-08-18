@@ -18,9 +18,13 @@ using [Mina] (http://nadarei.co/mina).
 
     require 'mina_sidekiq/tasks'
     ...
+    # to make logs persistent between deploys
+    set :shared_paths, ['log']
+
     task :setup do
-      # sidekiq needs a place to store its pid file
+      # sidekiq needs a place to store its pid file and log file
       queue! %[mkdir -p "#{deploy_to}/shared/pids/"]
+      queue! %[mkdir -p "#{deploy_to}/shared/log/"]
     end
 
     task :deploy do
@@ -28,6 +32,7 @@ using [Mina] (http://nadarei.co/mina).
         # stop accepting new workers
         invoke :'sidekiq:quiet'
         invoke :'git:clone'
+        invoke :'deploy:link_shared_paths'
         ...
 
         to :launch do
