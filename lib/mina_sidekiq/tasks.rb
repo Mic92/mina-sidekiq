@@ -83,7 +83,7 @@ namespace :sidekiq do
   task :start do
     queue %{
       echo "-----> Start sidekiq"
-      #{echo_cmd %[(cd #{deploy_to}/#{current_path}; nohup #{sidekiq} -e #{rails_env} -C #{sidekiq_config} -P #{sidekiq_pid} >> #{sidekiq_log} 2>&1 </dev/null &) ] }
+      #{echo_cmd %[cd #{deploy_to}/#{current_path}; nohup #{sidekiq} -e #{rails_env} -C #{sidekiq_config} -P #{sidekiq_pid} >> #{sidekiq_log} 2>&1 &] }
       }
   end
 
