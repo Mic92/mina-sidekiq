@@ -27,12 +27,19 @@ task :deploy => :environment do
   deploy do
     invoke :'git:clone'
     invoke :'bundle:install'
-    invoke :'sidekiq:start'
-    queue! %[sleep 3; kill -0 `cat #{sidekiq_pid}`]
 
+    # should run without error on first deployment
     invoke :'sidekiq:quiet'
-
     invoke :'sidekiq:stop'
-    queue! %[(kill -0 `cat #{sidekiq_pid}`) 2> /dev/null && exit 1 || exit 0]
+
+    to :launch do
+      invoke :'sidekiq:start'
+      queue! %[sleep 3; kill -0 `cat #{sidekiq_pid}`]
+
+      invoke :'sidekiq:quiet'
+
+      invoke :'sidekiq:stop'
+      queue! %[(kill -0 `cat #{sidekiq_pid}`) 2> /dev/null && exit 1 || exit 0]
+    end
   end
 end
