@@ -24,8 +24,8 @@ def force_add_ssh_key(&block)
 
   authorized_keys = File.expand_path("~/.ssh/authorized_keys")
   begin
-    File.chmod(0600, authorized_keys)
     File.open(authorized_keys, 'a+') do |f|
+      File.chmod(0600, authorized_keys)
       f.puts(pub_key)
     end
   rescue Exception => e
