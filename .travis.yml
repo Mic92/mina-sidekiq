@@ -2,4 +2,5 @@ language: ruby
 rvm:
   - "1.9.3"
   - "2.0.0"
+services: redis
 env: FORCE_ADD_SSH_KEY=1
