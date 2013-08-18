@@ -8,9 +8,12 @@ task :test do
     end
 
     FileUtils.rm_rf('deploy')
-    sh 'mina setup'
+    sh 'mina setup --verbose'
     begin
-      sh 'mina deploy'
+      # fresh deploy
+      sh 'mina deploy --verbose'
+      # second deploy
+      sh 'mina deploy --verbose'
     rescue Exception => e
       puts e.message
       puts e.backtrace.inspect
