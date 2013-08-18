@@ -1,6 +1,6 @@
 require 'mina'
 require 'mina/git'
-require 'mina-sidekiq/tasks'
+require 'mina_sidekiq/tasks'
 require 'mina/git'
 require 'mina/bundler'
 require 'mina/rvm'
@@ -26,10 +26,11 @@ task :deploy => :environment do
     invoke :'git:clone'
     invoke :'bundle:install'
     invoke :'sidekiq:start'
+    queue! %[sleep 3; kill -0 `cat #{sidekiq_pid}`]
 
-    # stop accepting new workers
-    #invoke :'sidekiq:quiet'
+    invoke :'sidekiq:quiet'
 
     invoke :'sidekiq:stop'
+    queue! %[(kill -0 `cat #{sidekiq_pid}`) 2> /dev/null && exit 1 || exit 0]
   end
 end
