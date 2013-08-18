@@ -59,18 +59,22 @@ namespace :sidekiq do
   # ### sidekiq:quiet
   desc "Quiet sidekiq (stop accepting new work)"
   task :quiet do
-    queue %{ if [ -f #{sidekiq_pid} ]; then
-      echo "-----> Quiet sidekiq (stop accepting new work)"
-      #{echo_cmd %{(cd #{deploy_to}/#{current_path} && #{sidekiqctl} quiet #{sidekiq_pid})} }
+    queue %{ if [ -d #{current_path} ] && [ -f #{sidekiq_pid} ] && kill -0 `cat #{sidekiq_pid}`> /dev/null 2>&1; then
+        echo "-----> Quiet sidekiq (stop accepting new work)"
+        #{echo_cmd %{cd #{deploy_to}/#{current_path} && #{sidekiqctl} quiet #{sidekiq_pid}} }
+      else
+        echo 'Sidekiq is not running'
       fi }
   end
 
   # ### sidekiq:stop
   desc "Stop sidekiq"
   task :stop do
-    queue %[ if [ -f #{sidekiq_pid} ]; then
-      echo "-----> Stop sidekiq"
-      #{echo_cmd %[(cd #{deploy_to}/#{current_path} && #{sidekiqctl} stop #{sidekiq_pid} #{sidekiq_timeout})]}
+    queue %[ if [ -f #{sidekiq_pid} ] && [ -f #{sidekiq_pid} ] && kill -0 `cat #{sidekiq_pid}`> /dev/null 2>&1; then
+        echo "-----> Stop sidekiq"
+        #{echo_cmd %[cd #{deploy_to}/#{current_path} && #{sidekiqctl} stop #{sidekiq_pid} #{sidekiq_timeout}]}
+      else
+        echo 'Sidekiq is not running'
       fi ]
   end
 
