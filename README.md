@@ -62,6 +62,10 @@ using [Mina] (http://nadarei.co/mina).
 
 ## Testing
 
+The test requires a local running ssh server with the ssh keys of the current
+user added to its `~/.ssh/authorized_keys`. In OS X, this is "Remote Login"
+under the Sharing pref pane.
+
 To run the full blown test suite use:
 
     bundle exec rake test
