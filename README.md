@@ -51,12 +51,14 @@ using [Mina] (http://nadarei.co/mina).
 
 ## Available Options
 
-* sidekiq: Sets the path to sidekiq.
-* sidekiqctl: Sets the path to sidekiqctl.
-* sidekiq\_timeout: Sets a upper limit of time a worker is allowed to finish, before it is killed.
-* sidekiq\_log: Sets the path to the log file of sidekiq
-* sidekiq\_pid: Sets the path to the pid file of a sidekiq worker
-* sidekiq_processes: Sets the number of sidekiq processes launched
+| Option              | Description                                                                    |
+| ------------------- | ------------------------------------------------------------------------------ |
+| *sidekiq*           | Sets the path to sidekiq.                                                      |
+| *sidekiqctl*        | Sets the path to sidekiqctl.                                                   |
+| *sidekiq\_timeout*  | Sets a upper limit of time a worker is allowed to finish, before it is killed. |
+| *sidekiq\_log*      | Sets the path to the log file of sidekiq.                                      |
+| *sidekiq\_pid*      | Sets the path to the pid file of a sidekiq worker.                             |
+| *sidekiq_processes* | Sets the number of sidekiq processes launched.                                 |
 
 ## Copyright
 
