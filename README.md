@@ -1,6 +1,8 @@
 mina-sidekiq
 ============
 
+[![Build Status](https://travis-ci.org/Mic92/mina-sidekiq.png?branch=master)](https://travis-ci.org/Mic92/mina-sidekiq)
+
 mina-sidekiq is a gem that adds tasks to aid in the deployment of [Sidekiq] (http://mperham.github.com/sidekiq/)
 using [Mina] (http://nadarei.co/mina).
 
