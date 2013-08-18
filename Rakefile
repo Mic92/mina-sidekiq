@@ -9,7 +9,17 @@ task :test do
 
     FileUtils.rm_rf('deploy')
     sh 'mina setup'
-    sh 'mina deploy'
+    begin
+      sh 'mina deploy'
+    rescue Exception => e
+      puts e.message
+      puts e.backtrace.inspect
+      log = "./deploy/shared/sidekiq.log"
+      if File.exists?(log)
+        puts "cat #{log}"
+        puts File.open(log).read
+      end
+    end
   end
 end
 
