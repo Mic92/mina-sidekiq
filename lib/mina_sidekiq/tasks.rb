@@ -42,7 +42,7 @@ set_default :sidekiq_timeout, 10
 
 # ### sidekiq_config
 # Sets the path to the configuration file of sidekiq
-set_default :sidekiq_config, "./config/sidekiq.yml"
+set_default :sidekiq_config, lambda { "#{deploy_to}/#{current_path}/config/sidekiq.yml" }
 
 # ### sidekiq_log
 # Sets the path to the log file of sidekiq
@@ -77,8 +77,8 @@ namespace :sidekiq do
     queue %[echo "-----> Quiet sidekiq (stop accepting new work)"]
     for_each_process do |pid_file, idx|
       queue %{
-        if [ -d #{deploy_to}/#{current_path} ] && [ -f #{pid_file} ] && kill -0 `cat #{pid_file}`> /dev/null 2>&1; then
-          #{echo_cmd %{cd #{deploy_to}/#{current_path} && #{sidekiqctl} quiet #{pid_file}} }
+        if [ -f #{pid_file} ] && kill -0 `cat #{pid_file}`> /dev/null 2>&1; then
+          #{echo_cmd %{#{sidekiqctl} quiet #{pid_file}} }
         else
           echo 'Sidekiq is not running'
         fi
@@ -92,8 +92,8 @@ namespace :sidekiq do
     queue %[echo "-----> Stop sidekiq"]
     for_each_process do |pid_file, idx|
       queue %[
-        if [ -d #{deploy_to}/#{current_path} ] && [ -f #{pid_file} ] && kill -0 `cat #{pid_file}`> /dev/null 2>&1; then
-          #{echo_cmd %[cd #{deploy_to}/#{current_path} && #{sidekiqctl} stop #{pid_file} #{sidekiq_timeout}]}
+        if [ -f #{pid_file} ] && kill -0 `cat #{pid_file}`> /dev/null 2>&1; then
+          #{echo_cmd %[#{sidekiqctl} stop #{pid_file} #{sidekiq_timeout}]}
         else
           echo 'Sidekiq is not running'
         fi
@@ -107,7 +107,7 @@ namespace :sidekiq do
     queue %[echo "-----> Start sidekiq"]
     for_each_process do |pid_file, idx|
       queue %{
-        #{echo_cmd %[cd #{deploy_to}/#{current_path}; nohup #{sidekiq} -e #{rails_env} -C #{sidekiq_config} -P #{pid_file} >> #{sidekiq_log} 2>&1 &] }
+        #{echo_cmd %[nohup #{sidekiq} -e #{rails_env} -C #{sidekiq_config} -P #{pid_file} >> #{sidekiq_log} 2>&1 &] }
       }
     end
   end
