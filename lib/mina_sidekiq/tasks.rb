@@ -80,7 +80,7 @@ namespace :sidekiq do
         if [ -f #{pid_file} ] && kill -0 `cat #{pid_file}`> /dev/null 2>&1; then
           #{echo_cmd %{#{sidekiqctl} quiet #{pid_file}} }
         else
-          echo 'Sidekiq is not running'
+          echo 'Skip quiet command (no pid file found)'
         fi
       }
     end
@@ -95,7 +95,7 @@ namespace :sidekiq do
         if [ -f #{pid_file} ] && kill -0 `cat #{pid_file}`> /dev/null 2>&1; then
           #{echo_cmd %[#{sidekiqctl} stop #{pid_file} #{sidekiq_timeout}]}
         else
-          echo 'Sidekiq is not running'
+          echo 'Skip stopping sidekiq (not pid file found)'
         fi
       ]
     end
