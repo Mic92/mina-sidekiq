@@ -73,7 +73,7 @@ namespace :sidekiq do
 
   # ### sidekiq:quiet
   desc "Quiet sidekiq (stop accepting new work)"
-  task :quiet do
+  task :quiet => :environment do
     queue %[echo "-----> Quiet sidekiq (stop accepting new work)"]
     for_each_process do |pid_file, idx|
       queue %{
@@ -88,7 +88,7 @@ namespace :sidekiq do
 
   # ### sidekiq:stop
   desc "Stop sidekiq"
-  task :stop do
+  task :stop => :environment do
     queue %[echo "-----> Stop sidekiq"]
     for_each_process do |pid_file, idx|
       queue %[
@@ -103,7 +103,7 @@ namespace :sidekiq do
 
   # ### sidekiq:start
   desc "Start sidekiq"
-  task :start do
+  task :start => :environment do
     queue %[echo "-----> Start sidekiq"]
     for_each_process do |pid_file, idx|
       queue %{
