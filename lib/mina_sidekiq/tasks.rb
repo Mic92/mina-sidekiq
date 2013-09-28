@@ -97,7 +97,7 @@ namespace :sidekiq do
           cd "#{deploy_to}/#{current_path}"
           #{echo_cmd %[#{sidekiqctl} stop #{pid_file} #{sidekiq_timeout}]}
         else
-          echo 'Skip stopping sidekiq (not pid file found)'
+          echo 'Skip stopping sidekiq (no pid file found)'
         fi
       ]
     end
