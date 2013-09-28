@@ -78,6 +78,7 @@ namespace :sidekiq do
     for_each_process do |pid_file, idx|
       queue %{
         if [ -f #{pid_file} ] && kill -0 `cat #{pid_file}`> /dev/null 2>&1; then
+          cd "#{deploy_to}/#{current_path}"
           #{echo_cmd %{#{sidekiqctl} quiet #{pid_file}} }
         else
           echo 'Skip quiet command (no pid file found)'
@@ -93,6 +94,7 @@ namespace :sidekiq do
     for_each_process do |pid_file, idx|
       queue %[
         if [ -f #{pid_file} ] && kill -0 `cat #{pid_file}`> /dev/null 2>&1; then
+          cd "#{deploy_to}/#{current_path}"
           #{echo_cmd %[#{sidekiqctl} stop #{pid_file} #{sidekiq_timeout}]}
         else
           echo 'Skip stopping sidekiq (not pid file found)'
@@ -107,7 +109,8 @@ namespace :sidekiq do
     queue %[echo "-----> Start sidekiq"]
     for_each_process do |pid_file, idx|
       queue %{
-        #{echo_cmd %[nohup #{sidekiq} -e #{rails_env} -C #{sidekiq_config} -P #{pid_file} >> #{sidekiq_log} 2>&1 &] }
+        cd "#{deploy_to}/#{current_path}"
+        #{echo_cmd %[nohup #{sidekiq} -e #{rails_env} -C #{sidekiq_config} -i #{idx} -P #{pid_file} >> #{sidekiq_log} 2>&1 &] }
       }
     end
   end
