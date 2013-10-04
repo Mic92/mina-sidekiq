@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    mina-sidekiq (0.2.0)
+    mina-sidekiq (0.3.0)
       mina
 
 GEM
