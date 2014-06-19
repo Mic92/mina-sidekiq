@@ -6,6 +6,7 @@ require 'mina/bundler'
 require 'mina/rvm'
 require 'fileutils'
 
+
 FileUtils.mkdir_p "#{Dir.pwd}/deploy"
 
 set :ssh_options, '-o StrictHostKeyChecking=no'
@@ -19,15 +20,15 @@ set :sidekiq_processes, 2
 set :shared_paths, ['log']
 
 task :environment do
-  invoke :'rvm:use[ruby-2.0.0]'
+  invoke :'rvm:use[ruby-2.1.2]'
 end
 
-task :setup => :environment do
+task setup: :environment do
   queue! %[mkdir -p "#{deploy_to}/shared/pids/"]
   queue! %[mkdir -p "#{deploy_to}/shared/log/"]
 end
 
-task :deploy => :environment do
+task deploy: :environment do
   deploy do
     invoke :'git:clone'
     invoke :'deploy:link_shared_paths'

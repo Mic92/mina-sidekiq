@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.homepage = "http://github.com/Mic92/mina-sidekiq"
   s.summary = "Tasks to deploy Sidekiq with mina."
   s.description = "Adds tasks to aid in the deployment of Sidekiq"
-  s.license = 'MIT'
+  s.license = "MIT"
 
   s.files = `git ls-files`.split("\n")
   s.test_files = `git ls-files -- {test,spec,features}/*`.split("\n")
@@ -19,7 +19,7 @@ Gem::Specification.new do |s|
   s.post_install_message = <<-MESSAGE
 Starting with 0.2.0, you have to add:
 
-    require 'mina_sidekiq/tasks'
+    require "mina_sidekiq/tasks"
 
 in your deploy.rb to load the library
 MESSAGE
