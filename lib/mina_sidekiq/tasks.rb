@@ -110,7 +110,7 @@ namespace :sidekiq do
     for_each_process do |pid_file, idx|
       queue %{
         cd "#{deploy_to}/#{current_path}"
-        #{echo_cmd %[nohup #{sidekiq} -d -e #{rails_env} -C #{sidekiq_config} -i #{idx} -P #{pid_file} -L #{sidekiq_log}] }
+        #{echo_cmd %[#{sidekiq} -d -e #{rails_env} -C #{sidekiq_config} -i #{idx} -P #{pid_file} -L #{sidekiq_log}] }
       }
     end
   end
