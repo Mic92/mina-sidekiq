@@ -6,6 +6,11 @@ mina-sidekiq
 mina-sidekiq is a gem that adds tasks to aid in the deployment of [Sidekiq] (http://mperham.github.com/sidekiq/)
 using [Mina] (http://nadarei.co/mina).
 
+##CURRENTLY UNMAINTAINED
+
+The original author of this library do not use mina nor sidekiq at the moment.
+If you want to further develop this project please contact <joerg@higgsboson.tk>
+
 # Getting Start
 
 ## Installation
