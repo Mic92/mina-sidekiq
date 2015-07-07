@@ -58,6 +58,10 @@ set_default :sidekiq_pid, lambda { "#{deploy_to}/#{shared_path}/pids/sidekiq.pid
 # Sets the number of sidekiq processes launched
 set_default :sidekiq_processes, 1
 
+# ### sidekiq_concurrency
+# Sets the number of sidekiq threads per process
+set_default :sidekiq_concurrency, 25
+
 # ## Control Tasks
 namespace :sidekiq do
   def for_each_process(&block)
@@ -110,7 +114,7 @@ namespace :sidekiq do
     for_each_process do |pid_file, idx|
       queue %{
         cd "#{deploy_to}/#{current_path}"
-        #{echo_cmd %[#{sidekiq} -d -e #{rails_env} -C #{sidekiq_config} -i #{idx} -P #{pid_file} -L #{sidekiq_log}] }
+        #{echo_cmd %[#{sidekiq} -d -e #{rails_env} -C #{sidekiq_config} -c #{sidekiq_concurrency} -i #{idx} -P #{pid_file} -L #{sidekiq_log}] }
       }
     end
   end
