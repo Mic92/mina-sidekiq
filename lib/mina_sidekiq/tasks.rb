@@ -37,8 +37,8 @@ set_default :sidekiq, lambda { "#{bundle_bin} exec sidekiq" }
 set_default :sidekiqctl, lambda { "#{bundle_prefix} sidekiqctl" }
 
 # ### sidekiq_timeout
-# Sets a upper limit of time a worker is allowed to finish, before it is killed.
-set_default :sidekiq_timeout, 10
+# Sets a upper limit of time a process is allowed to finish, before it is killed by sidekiqctl.
+set_default :sidekiq_timeout, 11
 
 # ### sidekiq_config
 # Sets the path to the configuration file of sidekiq
