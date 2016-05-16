@@ -125,4 +125,10 @@ namespace :sidekiq do
     invoke :'sidekiq:stop'
     invoke :'sidekiq:start'
   end
+
+  desc "Tail log from server"
+  task :log => :environment do
+    queue %[tail -f #{sidekiq_log}]
+  end
+
 end
