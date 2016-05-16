@@ -1,6 +1,13 @@
 Changelog
 =========
 
+0.4.0 2016-05-16
+----------------
+
+* `sidekiq_concurrency`
+* sidekiq_timeout is now bigger then 10s
+* add task skidekiq:log
+
 0.3.1 2015-01-18
 ----------------
 
