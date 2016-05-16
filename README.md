@@ -53,6 +53,7 @@ If you want to further develop this project please contact <joerg@higgsboson.tk>
 * sidekiq:start
 * sidekiq:restart
 * sidekiq:quiet
+* sidekiq:log
 
 ## Available Options
 
