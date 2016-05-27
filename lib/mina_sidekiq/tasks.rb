@@ -60,7 +60,10 @@ set_default :sidekiq_processes, 1
 
 # ### sidekiq_concurrency
 # Sets the number of sidekiq threads per process
-set_default :sidekiq_concurrency, 25
+# Defaults to nil to let sidekiq use its default thread count when not set
+set_default :sidekiq_concurrency, nil
+# Sets sidekiq concurrency parameter if sidekiq_concurrency is not nil
+sidekiq_concurrency = "-c #{sidekiq_concurrency}" unless sidekiq_concurrency.nil?
 
 # ## Control Tasks
 namespace :sidekiq do
@@ -114,7 +117,7 @@ namespace :sidekiq do
     for_each_process do |pid_file, idx|
       queue %{
         cd "#{deploy_to}/#{current_path}"
-        #{echo_cmd %[#{sidekiq} -d -e #{rails_env} -C #{sidekiq_config} -c #{sidekiq_concurrency} -i #{idx} -P #{pid_file} -L #{sidekiq_log}] }
+        #{echo_cmd %[#{sidekiq} -d -e #{rails_env} -C #{sidekiq_config} #{sidekiq_concurrency ||= ''} -i #{idx} -P #{pid_file} -L #{sidekiq_log}] }
       }
     end
   end
