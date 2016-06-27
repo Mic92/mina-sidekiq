@@ -1,10 +1,10 @@
 Changelog
 =========
 
-+0.4.1 2016-05-27
- +----------------
- +* Default `sidekiq_concurrency` to nil. It now needs explicitly set to
- override concurrency specified in config file
+0.4.1 2016-06-27
+----------------
+* Default `sidekiq_concurrency` to nil. It now needs explicitly set to
+  override concurrency specified in config file
 
 0.4.0 2016-05-16
 ----------------
