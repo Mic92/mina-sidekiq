@@ -16,13 +16,8 @@ Gem::Specification.new do |s|
   s.test_files = `git ls-files -- {test,spec,features}/*`.split("\n")
   s.executables = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.require_paths = ["lib"]
-  s.post_install_message = <<-MESSAGE
-Starting with 0.2.0, you have to add:
 
-    require "mina_sidekiq/tasks"
-
-in your deploy.rb to load the library
-MESSAGE
-
-  s.add_runtime_dependency "mina"
+  s.add_runtime_dependency 'mina'
+  s.add_development_dependency 'pry-byebug'
+  s.add_development_dependency 'minitest'
 end
