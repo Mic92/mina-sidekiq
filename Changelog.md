@@ -1,6 +1,10 @@
 Changelog
 =========
 
+1.0.0 2016-10-10
+----------------
+* support for mina 1.0 (thanks @devvmh)
+
 0.4.1 2016-06-27
 ----------------
 * Default `sidekiq_concurrency` to nil. It now needs explicitly set to
