@@ -1,20 +1,37 @@
 PATH
   remote: .
   specs:
-    mina-sidekiq (0.3.1)
+    mina-sidekiq (1.0.0)
       mina
 
 GEM
-  remote: http://www.rubygems.org/
+  remote: https://www.rubygems.org/
   specs:
-    mina (0.3.1)
+    byebug (9.0.5)
+    coderay (1.1.1)
+    method_source (0.8.2)
+    mina (1.0.0)
       open4 (~> 1.3.4)
       rake
+    minitest (5.9.0)
     open4 (1.3.4)
-    rake (10.4.2)
+    pry (0.10.4)
+      coderay (~> 1.1.0)
+      method_source (~> 0.8.1)
+      slop (~> 3.4)
+    pry-byebug (3.4.0)
+      byebug (~> 9.0)
+      pry (~> 0.10)
+    rake (11.3.0)
+    slop (3.6.0)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
   mina-sidekiq!
+  minitest
+  pry-byebug
+
+BUNDLED WITH
+   1.13.1

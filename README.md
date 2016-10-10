@@ -70,7 +70,7 @@ If you want to further develop this project please contact <joerg@higgsboson.tk>
 
 The test requires a local running ssh server with the ssh keys of the current
 user added to its `~/.ssh/authorized_keys`. In OS X, this is "Remote Login"
-under the Sharing pref pane.
+under the Sharing pref pane. You will also need a working rvm installation.
 
 To run the full blown test suite use:
 

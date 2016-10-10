@@ -16,6 +16,7 @@ describe "mina_sidekiq" do
   end
 
   def check_process(pid)
+    pid = pid.to_i
     begin
       Process.kill(0, pid)
       return true
@@ -40,7 +41,7 @@ describe "mina_sidekiq" do
         mina "deploy"
       rescue Exception => e
         log = "./deploy/shared/sidekiq.log"
-        if File.exists?(log)
+        if File.exist?(log)
           puts "cat #{log}"
           puts File.open(log).read
         end
@@ -50,12 +51,13 @@ describe "mina_sidekiq" do
     it "should start/stop sidekiq" do
       sidekiq_pid_path = @env_root.join("deploy", "shared", "pids", "sidekiq.pid")
       # fresh deploy
+      mina "deploy"
       mina "sidekiq:start"
       pid = File.read(sidekiq_pid_path)
       check_process(pid).must_equal true
       # second deploy
       mina "sidekiq:stop"
-      check_process(pid).must_equal true
+      check_process(pid).must_equal false
     end
   end
 end
