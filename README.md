@@ -12,35 +12,40 @@ Starting with 1.0.0 this gem requires Mina 1.0!
 
 ## Installation
 
-    gem install mina-sidekiq
+```console
+gem install mina-sidekiq
+```
 
 ## Example
 
 ## Usage example
 
-    require 'mina_sidekiq/tasks'
+```ruby
+require 'mina_sidekiq/tasks'
+#...
+
+task :setup do
+  # sidekiq needs a place to store its pid file and log file
+  command %(mkdir -p "#{fetch(:deploy_to)}/shared/pids/")
+  command %(mkdir -p "#{fetch(:deploy_to)}/shared/log/")
+end
+
+task :deploy do
+  deploy do
+    # stop accepting new workers
+    invoke :'sidekiq:quiet'
+    invoke :'git:clone'
+    invoke :'deploy:link_shared_paths'
     ...
 
-    task :setup do
-      # sidekiq needs a place to store its pid file and log file
-      command %(mkdir -p "#{fetch(:deploy_to)}/shared/pids/")
-      command %(mkdir -p "#{fetch(:deploy_to)}/shared/log/")
+    on :launch do
+      ...
+      invoke :'sidekiq:restart'
     end
+  end
+end
+```
 
-    task :deploy do
-      deploy do
-        # stop accepting new workers
-        invoke :'sidekiq:quiet'
-        invoke :'git:clone'
-        invoke :'deploy:link_shared_paths'
-        ...
-
-        on :launch do
-          ...
-          invoke :'sidekiq:restart'
-        end
-      end
-    end
 
 ## Available Tasks
 
@@ -69,12 +74,16 @@ under the Sharing pref pane. You will also need a working rvm installation.
 
 To run the full blown test suite use:
 
-    bundle exec rake test
+```console
+bundle exec rake test
+```
 
 For faster release cycle use
 
-    cd test_env
-    bundle exec mina deploy --verbose
+```console
+cd test_env
+bundle exec mina deploy --verbose
+```
 
 ## Copyright
 
