@@ -20,13 +20,11 @@ Starting with 1.0.0 this gem requires Mina 1.0!
 
     require 'mina_sidekiq/tasks'
     ...
-    # to make logs persistent between deploys
-    set :shared_paths, ['log']
 
     task :setup do
       # sidekiq needs a place to store its pid file and log file
-      queue! %[mkdir -p "#{deploy_to}/shared/pids/"]
-      queue! %[mkdir -p "#{deploy_to}/shared/log/"]
+      command %(mkdir -p "#{fetch(:deploy_to)}/shared/pids/")
+      command %(mkdir -p "#{fetch(:deploy_to)}/shared/log/")
     end
 
     task :deploy do
@@ -37,7 +35,7 @@ Starting with 1.0.0 this gem requires Mina 1.0!
         invoke :'deploy:link_shared_paths'
         ...
 
-        to :launch do
+        on :launch do
           ...
           invoke :'sidekiq:restart'
         end
