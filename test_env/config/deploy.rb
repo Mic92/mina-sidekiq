@@ -14,14 +14,8 @@ set :repository, 'https://github.com/Mic92/mina-sidekiq-test-rails.git'
 set :keep_releases, 2
 set :sidekiq_processes, 2
 
-set :shared_dirs, fetch(:shared_dirs, []).push('log')
-
 task :environment do
-  # this line is disabled because of a bug in mina 1.0.0
-  # invoke :'rvm:use', ENV.fetch('RUBY_VERSION', 'ruby-2.3.1')
-  env = ENV.fetch('RUBY_VERSION', 'ruby-2.3.1')
-  command %{source #{fetch(:rvm_use_path)}}
-  command %{rvm use "#{env}" --create}
+  invoke :'rvm:use', ENV.fetch('RUBY_VERSION', 'ruby-2.3.1')
 end
 
 task setup: :environment do
