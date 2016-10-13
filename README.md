@@ -18,8 +18,6 @@ gem install mina-sidekiq
 
 ## Example
 
-## Usage example
-
 ```ruby
 require 'mina_sidekiq/tasks'
 #...
