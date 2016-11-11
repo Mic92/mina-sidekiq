@@ -76,15 +76,16 @@ namespace :sidekiq do
   desc "Quiet sidekiq (stop accepting new work)"
   task :quiet => :environment do
     comment 'Quiet sidekiq (stop accepting new work)'
-    for_each_process do |pid_file, idx|
-      command %{
-        if [ -f #{pid_file} ] && kill -0 `cat #{pid_file}` > /dev/null 2>&1; then
-          cd "#{fetch(:current_path)}"
-          #{fetch(:sidekiqctl)} quiet #{pid_file}
-        else
-          echo 'Skip quiet command (no pid file found)'
-        fi
-      }.strip
+    in_path(fetch(:current_path)) do
+      for_each_process do |pid_file, idx|
+        command %{
+          if [ -f #{pid_file} ] && kill -0 `cat #{pid_file}` > /dev/null 2>&1; then
+            #{fetch(:sidekiqctl)} quiet #{pid_file}
+          else
+            echo 'Skip quiet command (no pid file found)'
+          fi
+        }.strip
+      end
     end
   end
 
@@ -92,15 +93,16 @@ namespace :sidekiq do
   desc "Stop sidekiq"
   task :stop => :environment do
     comment 'Stop sidekiq'
-    for_each_process do |pid_file, idx|
-      command %{
-        if [ -f #{pid_file} ] && kill -0 `cat #{pid_file}`> /dev/null 2>&1; then
-          cd #{fetch(:current_path)}
-          #{fetch(:sidekiqctl)} stop #{pid_file} #{fetch(:sidekiq_timeout)}
-        else
-          echo 'Skip stopping sidekiq (no pid file found)'
-        fi
-      }.strip
+    in_path(fetch(:current_path)) do
+      for_each_process do |pid_file, idx|
+        command %{
+          if [ -f #{pid_file} ] && kill -0 `cat #{pid_file}`> /dev/null 2>&1; then
+            #{fetch(:sidekiqctl)} stop #{pid_file} #{fetch(:sidekiq_timeout)}
+          else
+            echo 'Skip stopping sidekiq (no pid file found)'
+          fi
+        }.strip
+      end
     end
   end
 
@@ -108,14 +110,14 @@ namespace :sidekiq do
   desc "Start sidekiq"
   task :start => :environment do
     comment 'Start sidekiq'
-    for_each_process do |pid_file, idx|
-      sidekiq_concurrency = fetch(:sidekiq_concurrency)
-      concurrency_arg = if sidekiq_concurrency.nil?
-                          ""
-                        else
-                          "-c #{sidekiq_concurrency}"
-                        end
-      in_path(fetch(:current_path)) do
+    in_path(fetch(:current_path)) do
+      for_each_process do |pid_file, idx|
+        sidekiq_concurrency = fetch(:sidekiq_concurrency)
+        concurrency_arg = if sidekiq_concurrency.nil?
+                            ""
+                          else
+                            "-c #{sidekiq_concurrency}"
+                          end
         command %[#{fetch(:sidekiq)} -d -e #{fetch(:rails_env)} #{concurrency_arg} -C #{fetch(:sidekiq_config)} -i #{idx} -P #{pid_file} -L #{fetch(:sidekiq_log)}]
       end
     end
