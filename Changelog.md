@@ -1,6 +1,10 @@
 Changelog
 =========
 
+1.0.1 2016-11-17
+----------------
+* restore current directory after changing to sidekiq directory
+
 1.0.0 2016-10-10
 ----------------
 * support for mina 1.0 (thanks @devvmh)
