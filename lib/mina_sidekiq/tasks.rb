@@ -4,6 +4,7 @@
 # ## Usage example
 #     require 'mina_sidekiq/tasks'
 #     ...
+
 #     task :setup do
 #       # sidekiq needs a place to store its pid file
 #       command %[mkdir -p "#{fetch(:deploy_to)}/shared/pids/"]
@@ -11,8 +12,9 @@
 #
 #     task :deploy do
 #       deploy do
-#         invoke :'sidekiq:quiet'
 #         invoke :'git:clone'
+#         invoke :'sidekiq:quiet'
+#         invoke :'deploy:link_shared_paths'
 #         ...
 #
 #         to :launch do
