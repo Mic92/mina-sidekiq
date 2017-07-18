@@ -31,8 +31,8 @@ end
 task :deploy do
   deploy do
     # stop accepting new workers
-    invoke :'sidekiq:quiet'
     invoke :'git:clone'
+    invoke :'sidekiq:quiet'
     invoke :'deploy:link_shared_paths'
     ...
 
