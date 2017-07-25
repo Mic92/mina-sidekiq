@@ -1,6 +1,10 @@
 Changelog
 =========
 
+1.0.2 2017-07-25
+----------------
+* fix undefined variable, which broke `sidekiq:log`
+
 1.0.1 2016-11-17
 ----------------
 * restore current directory after changing to sidekiq directory
