@@ -134,6 +134,6 @@ namespace :sidekiq do
 
   desc "Tail log from server"
   task :log => :environment do
-    command %[tail -f #{sidekiq_log}]
+    command %[tail -f #{fetch(:sidekiq_log)}]
   end
 end
