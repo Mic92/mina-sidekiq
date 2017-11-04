@@ -3,11 +3,7 @@ cache: bundler
 rvm:
   - "2.2.5"
   - "2.3.1"
-services: redis
 
 before_install:
   - ssh-keygen -t rsa -N '' -f ~/.ssh/id_rsa
   - cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
-  - echo "Host localhost" >> /home/travis/.ssh/config
-  - echo "  StrictHostKeyChecking no" >> /home/travis/.ssh/config
-  - chmod g-rw,o-rw /home/travis/.ssh/*
