@@ -1,6 +1,10 @@
 Changelog
 =========
 
+1.0.3 2017-11-05
+----------------
+* replace deprecated dependency on environment task with remote_environment
+
 1.0.2 2017-07-25
 ----------------
 * fix undefined variable, which broke `sidekiq:log`
