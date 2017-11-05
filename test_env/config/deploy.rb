@@ -14,11 +14,11 @@ set :repository, 'https://github.com/Mic92/mina-sidekiq-test-rails.git'
 set :keep_releases, 2
 set :sidekiq_processes, 2
 
-task :environment do
+task :remote_environment do
   invoke :'rvm:use', ENV.fetch('RUBY_VERSION', 'ruby-2.3.1')
 end
 
-task setup: :environment do
+task setup: :remote_environment do
   command %(mkdir -p "#{fetch(:deploy_to)}/shared/pids/")
   command %(mkdir -p "#{fetch(:deploy_to)}/shared/log/")
 end
