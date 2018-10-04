@@ -55,14 +55,16 @@ end
 
 ## Available Options
 
-| Option              | Description                                                                    |
-| ------------------- | ------------------------------------------------------------------------------ |
-| *sidekiq*           | Sets the path to sidekiq.                                                      |
-| *sidekiqctl*        | Sets the path to sidekiqctl.                                                   |
-| *sidekiq\_timeout*  | Sets a upper limit of time a worker is allowed to finish, before it is killed. |
-| *sidekiq\_log*      | Sets the path to the log file of sidekiq.                                      |
-| *sidekiq\_pid*      | Sets the path to the pid file of a sidekiq worker.                             |
-| *sidekiq_processes* | Sets the number of sidekiq processes launched.                                 |
+| Option              | Description                                                                                       |
+| ------------------- | ------------------------------------------------------------------------------------------------- |
+| *sidekiq*           | Sets the path to sidekiq.                                                                         |
+| *sidekiqctl*        | Sets the path to sidekiqctl.                                                                      |
+| *sidekiq\_timeout*  | Sets a upper limit of time a worker is allowed to finish, before it is killed.                    |
+| *sidekiq\_log*      | Sets the path to the log file of sidekiq.                                                         |
+| *sidekiq\_pid*      | Sets the path to the pid file of a sidekiq worker.                                                |
+| *sidekiq_processes* | Sets the number of sidekiq processes launched.                                                    |
+| *sidekiq_config*    | Sets the config file path.                                                                        |
+| *sidekiq_configs*   | Sets the config file paths when using more than one sidekiq process with different configuration. |
 
 ## Testing
 
