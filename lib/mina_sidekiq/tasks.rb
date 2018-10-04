@@ -44,7 +44,8 @@ set :sidekiq_timeout, 11
 set :sidekiq_config, -> { "#{fetch(:current_path)}/config/sidekiq.yml" }
 
 # ### sidekiq_configs
-# Sets the path to the configurations files of sidekiq when using more than one sidekiq process.
+# A list of configuration file paths. Each file path will be assigned to one sidekiq
+# instance in order. When specified sidekiq_config will be ignored.
 set :sidekiq_configs, -> {
   [
     # "#{fetch(:current_path)}/config/sidekiq_1.yml",
