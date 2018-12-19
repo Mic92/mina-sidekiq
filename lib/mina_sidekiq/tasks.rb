@@ -130,7 +130,10 @@ namespace :sidekiq do
                           else
                             "-c #{sidekiq_concurrency}"
                           end
-        command %[#{fetch(:sidekiq)} -d -e #{fetch(:rails_env)} #{concurrency_arg} -C #{sidekiq_config} -i #{idx} -P #{pid_file} -L #{fetch(:sidekiq_log)}]
+        command_line = %[#{fetch(:sidekiq)} -d -e #{fetch(:rails_env)} #{concurrency_arg} -C #{sidekiq_config} -i #{idx} -P #{pid_file}]
+        command_line += " -L #{fetch(:sidekiq_log)}" if fetch(:sidekiq_log)
+
+        command command_line
       end
     end
   end
