@@ -40,8 +40,18 @@ set :sidekiqctl, -> { "#{fetch(:bundle_prefix)} sidekiqctl" }
 set :sidekiq_timeout, 11
 
 # ### sidekiq_config
-# Sets the path to the configuration file of sidekiq
+# Sets the path to the configuration file of sidekiq.
 set :sidekiq_config, -> { "#{fetch(:current_path)}/config/sidekiq.yml" }
+
+# ### sidekiq_configs
+# A list of configuration file paths. Each file path will be assigned to one sidekiq
+# instance in order. When specified sidekiq_config will be ignored.
+set :sidekiq_configs, -> {
+  [
+    # "#{fetch(:current_path)}/config/sidekiq_1.yml",
+    # "#{fetch(:current_path)}/config/sidekiq_2.yml"
+  ]
+}
 
 # ### sidekiq_log
 # Sets the path to the log file of sidekiq
@@ -114,13 +124,14 @@ namespace :sidekiq do
     comment 'Start sidekiq'
     in_path(fetch(:current_path)) do
       for_each_process do |pid_file, idx|
+        sidekiq_config = fetch(:sidekiq_configs)[idx] || fetch(:sidekiq_config)
         sidekiq_concurrency = fetch(:sidekiq_concurrency)
         concurrency_arg = if sidekiq_concurrency.nil?
                             ""
                           else
                             "-c #{sidekiq_concurrency}"
                           end
-        command %[#{fetch(:sidekiq)} -d -e #{fetch(:rails_env)} #{concurrency_arg} -C #{fetch(:sidekiq_config)} -i #{idx} -P #{pid_file} -L #{fetch(:sidekiq_log)}]
+        command %[#{fetch(:sidekiq)} -d -e #{fetch(:rails_env)} #{concurrency_arg} -C #{sidekiq_config} -i #{idx} -P #{pid_file} -L #{fetch(:sidekiq_log)}]
       end
     end
   end
