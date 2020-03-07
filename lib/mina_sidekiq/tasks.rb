@@ -33,7 +33,7 @@ set :sidekiq, -> { "#{fetch(:bundle_bin)} exec sidekiq" }
 
 # ### sidekiqctl
 # Sets the path to sidekiqctl.
-set :sidekiqctl, -> { "#{fetch(:bundle_prefix)} sidekiqctl" }
+set :sidekiqctl, -> { "#{fetch(:bundle_bin)} exec sidekiqctl" }
 
 # ### sidekiq_timeout
 # Sets a upper limit of time a process is allowed to finish, before it is killed by sidekiqctl.
