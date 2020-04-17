@@ -71,6 +71,15 @@ set :sidekiq_processes, 1
 # Sets the number of sidekiq threads per process (overrides value in sidekiq.yml)
 set :sidekiq_concurrency, nil
 
+set :sidekiq_user, nil
+
+# Init system integration
+set :init_system, -> { nil }
+# systemd integration
+set :service_unit_name, "sidekiq-#{fetch(:rails_env)}.service"
+
+set :upstart_service_name, "sidekiq"
+
 # ## Control Tasks
 namespace :sidekiq do
   def for_each_process(&block)
@@ -88,15 +97,22 @@ namespace :sidekiq do
   desc "Quiet sidekiq (stop accepting new work)"
   task :quiet => :remote_environment do
     comment 'Quiet sidekiq (stop accepting new work)'
-    in_path(fetch(:current_path)) do
-      for_each_process do |pid_file, idx|
-        command %{
-          if [ -f #{pid_file} ] && kill -0 `cat #{pid_file}` > /dev/null 2>&1; then
-            #{fetch(:sidekiqctl)} quiet #{pid_file}
-          else
-            echo 'Skip quiet command (no pid file found)'
-          fi
-        }.strip
+    case fetch(:init_system)
+    when :systemd
+      command %{ systemctl reload #{ fetch(:service_unit_name) } }
+    when :upstart
+      command %{ sudo service #{ fetch(:upstart_service_name) } reload }
+    else
+      in_path(fetch(:current_path)) do
+        for_each_process do |pid_file, idx|
+          command %{
+            if [ -f #{pid_file} ] && kill -0 `cat #{pid_file}` > /dev/null 2>&1; then
+              #{fetch(:sidekiqctl)} quiet #{pid_file}
+            else
+              echo 'Skip quiet command (no pid file found)'
+            fi
+          }.strip
+        end
       end
     end
   end
@@ -105,15 +121,22 @@ namespace :sidekiq do
   desc "Stop sidekiq"
   task :stop => :remote_environment do
     comment 'Stop sidekiq'
-    in_path(fetch(:current_path)) do
-      for_each_process do |pid_file, idx|
-        command %{
-          if [ -f #{pid_file} ] && kill -0 `cat #{pid_file}`> /dev/null 2>&1; then
-            #{fetch(:sidekiqctl)} stop #{pid_file} #{fetch(:sidekiq_timeout)}
-          else
-            echo 'Skip stopping sidekiq (no pid file found)'
-          fi
-        }.strip
+    case fetch(:init_system)
+    when :systemd
+      command %{ systemctl stop #{ fetch(:service_unit_name) } }
+    when :upstart
+      command %{ sudo service #{ fetch(:upstart_service_name) } stop }
+    else
+      in_path(fetch(:current_path)) do
+        for_each_process do |pid_file, idx|
+          command %{
+            if [ -f #{pid_file} ] && kill -0 `cat #{pid_file}`> /dev/null 2>&1; then
+              #{fetch(:sidekiqctl)} stop #{pid_file} #{fetch(:sidekiq_timeout)}
+            else
+              echo 'Skip stopping sidekiq (no pid file found)'
+            fi
+          }.strip
+        end
       end
     end
   end
@@ -122,21 +145,59 @@ namespace :sidekiq do
   desc "Start sidekiq"
   task :start => :remote_environment do
     comment 'Start sidekiq'
-    in_path(fetch(:current_path)) do
-      for_each_process do |pid_file, idx|
-        sidekiq_config = fetch(:sidekiq_configs)[idx] || fetch(:sidekiq_config)
-        sidekiq_concurrency = fetch(:sidekiq_concurrency)
-        concurrency_arg = if sidekiq_concurrency.nil?
-                            ""
-                          else
-                            "-c #{sidekiq_concurrency}"
-                          end
-        command_line = %[#{fetch(:sidekiq)} -d -e #{fetch(:rails_env)} #{concurrency_arg} -C #{sidekiq_config} -i #{idx} -P #{pid_file}]
-        command_line += " -L #{fetch(:sidekiq_log)}" if fetch(:sidekiq_log)
+    case fetch(:init_system)
+    when :systemd
+      command %{ systemctl start #{ fetch(:service_unit_name) } }
+    when :upstart
+      command %{ sudo service #{ fetch(:upstart_service_name) } start }
+    else
+      in_path(fetch(:current_path)) do
+        for_each_process do |pid_file, idx|
+          sidekiq_config = fetch(:sidekiq_configs)[idx] || fetch(:sidekiq_config)
+          sidekiq_concurrency = fetch(:sidekiq_concurrency)
+          concurrency_arg = if sidekiq_concurrency.nil?
+                              ""
+                            else
+                              "-c #{sidekiq_concurrency}"
+                            end
+          command_line = %[#{fetch(:sidekiq)} -d -e #{fetch(:rails_env)} #{concurrency_arg} -C #{sidekiq_config} -i #{idx} -P #{pid_file}]
+          command_line += " -L #{fetch(:sidekiq_log)}" if fetch(:sidekiq_log)
 
-        command command_line
+          command command_line
+        end
       end
     end
+  end
+
+  task :install do
+    case fetch(:init_system)
+    when :systemd
+      create_systemd_template
+    end
+  end
+
+  task :uninstall do
+    case fetch(:init_system)
+    when :systemd
+      command %{ systemctl disable #{fetch(:service_unit_name)} }
+      command %{ rm #{File.join(fetch(:service_unit_path, fetch_systemd_unit_path),fetch(:service_unit_name))}  }
+    end
+  end
+
+  def create_systemd_template
+    template =  "[Unit]\nDescription=sidekiq for #{fetch(:application)} #{fetch(:app_name)}\nAfter=syslog.target network.target\n\n[Service]\nType=simple\nEnvironment=RAILS_ENV=#{ fetch(:rails_env) }\nWorkingDirectory=#{fetch(:deploy_to)}/current\nExecStart=#{fetch(:bundler_path, '/usr/local/bin/bundler')} exec sidekiq -e #{fetch(:rails_env)}\nExecReload=/bin/kill -TSTP $MAINPID\nExecStop=/bin/kill -TERM $MAINPID\n\nRestartSec=1\nRestart=on-failure\n\nSyslogIdentifier=sidekiq\n\n[Install]\nWantedBy=default.target\n"
+    systemd_path = fetch(:service_unit_path, fetch_systemd_unit_path)
+    service_path = systemd_path + "/" + fetch(:service_unit_name)
+    command %{ mkdir -p #{systemd_path} }
+    command %{ touch #{service_path} }
+    command %{ echo "#{ template }" > #{ service_path } }
+    command %{ systemctl daemon-reload }
+    command %{ systemctl enable #{ service_path } }
+  end
+
+  def fetch_systemd_unit_path
+    home_dir = '/usr'
+    File.join(home_dir, "lib", "systemd", "user")
   end
 
   # ### sidekiq:restart
@@ -150,4 +211,5 @@ namespace :sidekiq do
   task :log => :remote_environment do
     command %[tail -f #{fetch(:sidekiq_log)}]
   end
+
 end
