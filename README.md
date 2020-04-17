@@ -8,6 +8,8 @@ using [Mina](http://nadarei.co/mina).
 
 Starting with 1.0.0 this gem requires Mina 1.0! (thanks [@devvmh](https://github.com/devvmh))
 
+Support sidekiq > 6.0, reference project capistrano-sidekiq, github: https://github.com/seuros/capistrano-sidekiq
+
 # Getting Start
 
 ## Installation
@@ -43,6 +45,45 @@ task :deploy do
   end
 end
 ```
+## Support sidekiq > 6.0
+
+Set init system to systemd in the mina deploy config:
+
+```ruby
+  set :init_system, :systemd
+```
+
+Enable lingering for systemd user account
+
+```
+  loginctl enable-linger USERACCOUNT
+```
+
+Install systemd.service template file and enable the service with:
+
+```
+  bundle exec mina sidekiq:install
+```
+
+Default name for the service file is sidekiq-env.service. This can be changed as needed, for example:
+
+```ruby
+  set :service_unit_name, "sidekiq-#{fetch(:rails_env)}}.service"
+```
+
+## Integration with upstart
+
+Set init system to upstart in the cap deploy config:
+
+```ruby
+  set :init_system, :upstart
+```
+
+Set upstart service name:
+
+```ruby
+  set :upstart_service_name, 'sidekiq'
+```
 
 
 ## Available Tasks
@@ -52,6 +93,10 @@ end
 * sidekiq:restart
 * sidekiq:quiet
 * sidekiq:log
+
+sidekiq > 6.0
+* sidekiq:install
+* sidekiq:uninstall
 
 ## Available Options
 
