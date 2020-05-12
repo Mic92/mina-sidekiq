@@ -77,6 +77,7 @@ set :sidekiq_user, nil
 set :init_system, -> { nil }
 # systemd integration
 set :service_unit_name, "sidekiq-#{fetch(:rails_env)}.service"
+set :systemctl_command, 'systemctl --user'
 
 set :upstart_service_name, "sidekiq"
 
@@ -99,7 +100,7 @@ namespace :sidekiq do
     comment 'Quiet sidekiq (stop accepting new work)'
     case fetch(:init_system)
     when :systemd
-      command %{ systemctl reload #{ fetch(:service_unit_name) } }
+      command %{ #{ fetch(:systemctl_command) } reload #{ fetch(:service_unit_name) } }
     when :upstart
       command %{ sudo service #{ fetch(:upstart_service_name) } reload }
     else
@@ -123,7 +124,7 @@ namespace :sidekiq do
     comment 'Stop sidekiq'
     case fetch(:init_system)
     when :systemd
-      command %{ systemctl stop #{ fetch(:service_unit_name) } }
+      command %{ #{ fetch(:systemctl_command) } stop #{ fetch(:service_unit_name) } }
     when :upstart
       command %{ sudo service #{ fetch(:upstart_service_name) } stop }
     else
@@ -147,7 +148,7 @@ namespace :sidekiq do
     comment 'Start sidekiq'
     case fetch(:init_system)
     when :systemd
-      command %{ systemctl start #{ fetch(:service_unit_name) } }
+      command %{ #{ fetch(:systemctl_command) } start #{ fetch(:service_unit_name) } }
     when :upstart
       command %{ sudo service #{ fetch(:upstart_service_name) } start }
     else
@@ -179,20 +180,23 @@ namespace :sidekiq do
   task :uninstall do
     case fetch(:init_system)
     when :systemd
-      command %{ systemctl disable #{fetch(:service_unit_name)} }
+      command %{ #{ fetch(:systemctl_command) } disable #{fetch(:service_unit_name)} }
       command %{ rm #{File.join(fetch(:service_unit_path, fetch_systemd_unit_path),fetch(:service_unit_name))}  }
     end
   end
 
   def create_systemd_template
-    template =  "[Unit]\nDescription=sidekiq for #{fetch(:application)} #{fetch(:app_name)}\nAfter=syslog.target network.target\n\n[Service]\nType=simple\nEnvironment=RAILS_ENV=#{ fetch(:rails_env) }\nWorkingDirectory=#{fetch(:deploy_to)}/current\nExecStart=#{fetch(:bundler_path, '/usr/local/bin/bundler')} exec sidekiq -e #{fetch(:rails_env)}\nExecReload=/bin/kill -TSTP $MAINPID\nExecStop=/bin/kill -TERM $MAINPID\n\nRestartSec=1\nRestart=on-failure\n\nSyslogIdentifier=sidekiq\n\n[Install]\nWantedBy=default.target\n"
+    template =  "[Unit]\nDescription=sidekiq for #{fetch(:application)} #{fetch(:app_name)}\nAfter=syslog.target network.target\n\n[Service]\nType=simple\nEnvironment=RAILS_ENV=#{ fetch(:rails_env) }\nStandardOutput=append:#{fetch(:deploy_to)}/current/log/sidekiq.log\nStandardError=append:#{fetch(:deploy_to)}/current/log/sidekiq.log\nWorkingDirectory=#{fetch(:deploy_to)}/current\nExecStart=#{fetch(:bundler_path, '/usr/local/bin/bundler')} exec sidekiq -e #{fetch(:rails_env)}\nExecReload=/bin/kill -TSTP $MAINPID\nExecStop=/bin/kill -TERM $MAINPID\n\nRestartSec=1\nRestart=on-failure\n\nSyslogIdentifier=sidekiq\n\n[Install]\nWantedBy=default.target\n"
     systemd_path = fetch(:service_unit_path, fetch_systemd_unit_path)
     service_path = systemd_path + "/" + fetch(:service_unit_name)
+    comment %{Creating systemctl unit file}
     command %{ mkdir -p #{systemd_path} }
     command %{ touch #{service_path} }
     command %{ echo "#{ template }" > #{ service_path } }
-    command %{ systemctl daemon-reload }
-    command %{ systemctl enable #{ service_path } }
+    comment %{Reloading systemctl daemon}
+    command %{ #{ fetch(:systemctl_command) } daemon-reload }
+    comment %{Enabling sidekiq service}
+    command %{ #{ fetch(:systemctl_command) } enable #{ service_path } }
   end
 
   def fetch_systemd_unit_path

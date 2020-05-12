@@ -68,9 +68,14 @@ Install systemd.service template file and enable the service with:
 Default name for the service file is sidekiq-env.service. This can be changed as needed, for example:
 
 ```ruby
-  set :service_unit_name, "sidekiq-#{fetch(:rails_env)}}.service"
+  set :service_unit_name, "sidekiq-#{fetch(:rails_env)}.service"
 ```
 
+Default systemctl command is ```systemctl --user```, this can be changed, for example:
+
+```ruby
+  set :systemctl_command, 'systemctl --user'
+```
 ## Integration with upstart
 
 Set init system to upstart in the cap deploy config:
