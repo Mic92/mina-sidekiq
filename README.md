@@ -76,6 +76,27 @@ Default systemctl command is ```systemctl --user```, this can be changed, for ex
 ```ruby
   set :systemctl_command, 'systemctl --user'
 ```
+For non privileged user (non sudo) usage set up path for systemctl unit file:
+
+```ruby
+  set :service_unit_path, '/home/www/.config/systemd/user'
+```
+
+where ```www``` is the username. For details see systemctl [doc page](https://www.freedesktop.org/software/systemd/man/systemd.unit.html) 
+
+To use systemctl integration with rbenv bundler path must be setted:
+
+```ruby
+  set :bundler_path, '/home/www/.rbenv/shims/bundler'
+```
+
+To get bundler path use:
+
+```bash
+  which bundler
+```
+
+
 ## Integration with upstart
 
 Set init system to upstart in the cap deploy config:
