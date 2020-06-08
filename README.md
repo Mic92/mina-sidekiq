@@ -68,8 +68,34 @@ Install systemd.service template file and enable the service with:
 Default name for the service file is sidekiq-env.service. This can be changed as needed, for example:
 
 ```ruby
-  set :service_unit_name, "sidekiq-#{fetch(:rails_env)}}.service"
+  set :service_unit_name, "sidekiq-#{fetch(:rails_env)}.service"
 ```
+
+Default systemctl command is ```systemctl --user```, this can be changed, for example:
+
+```ruby
+  set :systemctl_command, 'systemctl --user'
+```
+For non privileged user (non sudo) usage set up path for systemctl unit file:
+
+```ruby
+  set :service_unit_path, '/home/www/.config/systemd/user'
+```
+
+where ```www``` is the username. For details see systemctl [doc page](https://www.freedesktop.org/software/systemd/man/systemd.unit.html) 
+
+To use systemctl integration with rbenv bundler path must be setted:
+
+```ruby
+  set :bundler_path, '/home/www/.rbenv/shims/bundler'
+```
+
+To get bundler path use:
+
+```bash
+  which bundler
+```
+
 
 ## Integration with upstart
 
