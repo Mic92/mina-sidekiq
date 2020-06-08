@@ -186,7 +186,28 @@ namespace :sidekiq do
   end
 
   def create_systemd_template
-    template =  "[Unit]\nDescription=sidekiq for #{fetch(:application)} #{fetch(:app_name)}\nAfter=syslog.target network.target\n\n[Service]\nType=simple\nEnvironment=RAILS_ENV=#{ fetch(:rails_env) }\nStandardOutput=append:#{fetch(:deploy_to)}/current/log/sidekiq.log\nStandardError=append:#{fetch(:deploy_to)}/current/log/sidekiq.log\nWorkingDirectory=#{fetch(:deploy_to)}/current\nExecStart=#{fetch(:bundler_path, '/usr/local/bin/bundler')} exec sidekiq -e #{fetch(:rails_env)}\nExecReload=/bin/kill -TSTP $MAINPID\nExecStop=/bin/kill -TERM $MAINPID\n\nRestartSec=1\nRestart=on-failure\n\nSyslogIdentifier=sidekiq\n\n[Install]\nWantedBy=default.target\n"
+    template =  %{
+[Unit]
+Description=sidekiq for #{fetch(:application)} #{fetch(:app_name)}
+After=syslog.target network.target
+
+[Service]
+Type=simple
+Environment=RAILS_ENV=#{ fetch(:rails_env) }
+StandardOutput=append:#{fetch(:deploy_to)}/current/log/sidekiq.log
+StandardError=append:#{fetch(:deploy_to)}/current/log/sidekiq.log
+WorkingDirectory=#{fetch(:deploy_to)}/current
+ExecStart=#{fetch(:bundler_path, '/usr/local/bin/bundler')} exec sidekiq -e #{fetch(:rails_env)}
+ExecReload=/bin/kill -TSTP $MAINPID
+ExecStop=/bin/kill -TERM $MAINPID
+RestartSec=1
+Restart=on-failure
+
+SyslogIdentifier=sidekiq
+
+[Install]
+WantedBy=default.target
+}
     systemd_path = fetch(:service_unit_path, fetch_systemd_unit_path)
     service_path = systemd_path + "/" + fetch(:service_unit_name)
     comment %{Creating systemctl unit file}
