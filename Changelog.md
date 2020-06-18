@@ -1,6 +1,11 @@
 Changelog
 =========
 
+1.1.0 2020-07-18
+----------------
+* Add sidekiq 6 support, including support for unprivileged deployments
+* Allow multiple sidekiq process with different configs
+
 1.0.3 2017-11-05
 ----------------
 * replace deprecated dependency on environment task with remote_environment
