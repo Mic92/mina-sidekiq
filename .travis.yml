@@ -1,9 +1,0 @@
-language: ruby
-cache: bundler
-rvm:
-  - "2.2.5"
-  - "2.3.1"
-
-before_install:
-  - ssh-keygen -t rsa -N '' -f ~/.ssh/id_rsa
-  - cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys

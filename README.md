@@ -77,10 +77,10 @@ Default systemctl command is ```systemctl --user```, this can be changed, for ex
 For non privileged user (non sudo) usage set up path for systemctl unit file:
 
 ```ruby
-  set :service_unit_path, '/home/www/.config/systemd/user'
+  set :service_unit_path, '$HOME/.config/systemd/user'
 ```
 
-where ```www``` is the username. For details see systemctl [doc page](https://www.freedesktop.org/software/systemd/man/systemd.unit.html) 
+For details see systemctl [doc page](https://www.freedesktop.org/software/systemd/man/systemd.unit.html) 
 
 To use systemctl integration with rbenv bundler path must be setted:
 
