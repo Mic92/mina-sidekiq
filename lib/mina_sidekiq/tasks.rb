@@ -41,7 +41,7 @@ set :sidekiq_timeout, 11
 
 # ### sidekiq_config
 # Sets the path to the configuration file of sidekiq.
-set :sidekiq_config, -> { "#{fetch(:current_path)}/config/sidekiq.yml" }
+set :sidekiq_config, -> { "#{fetch(:shared_path)}/config/sidekiq.yml" }
 
 # ### sidekiq_configs
 # A list of configuration file paths. Each file path will be assigned to one sidekiq
@@ -57,7 +57,7 @@ set :sidekiq_configs, -> {
 # Sets the path to the log file of sidekiq
 #
 # To disable logging set it to "/dev/null"
-set :sidekiq_log, -> { "#{fetch(:current_path)}/log/sidekiq.log" }
+set :sidekiq_log, -> { "#{fetch(:shared_path)}/log/sidekiq.log" }
 
 # ### sidekiq_pid
 # Sets the path to the pid file of a sidekiq worker
@@ -181,7 +181,7 @@ namespace :sidekiq do
     case fetch(:init_system)
     when :systemd
       command %{ #{ fetch(:systemctl_command) } disable #{fetch(:service_unit_name)} }
-      command %{ rm #{File.join(fetch(:service_unit_path, fetch_systemd_unit_path),fetch(:service_unit_name))}  }
+      command %{ rm #{File.join(fetch(:service_unit_path, fetch_systemd_unit_path), fetch(:service_unit_name))}  }
     end
   end
 
@@ -194,14 +194,16 @@ After=syslog.target network.target
 [Service]
 Type=simple
 Environment=RAILS_ENV=#{ fetch(:rails_env) }
-StandardOutput=append:#{fetch(:deploy_to)}/current/log/sidekiq.log
-StandardError=append:#{fetch(:deploy_to)}/current/log/sidekiq.log
+StandardOutput=append:#{fetch(:sidekiq_log)}
+StandardError=append:#{fetch(:sidekiq_log)}
 WorkingDirectory=#{fetch(:deploy_to)}/current
-ExecStart=#{fetch(:bundler_path, '/usr/local/bin/bundler')} exec sidekiq -e #{fetch(:rails_env)}
+ExecStart=#{fetch(:bundler_path, '/usr/local/bin/bundler')} exec sidekiq -e #{fetch(:rails_env)} -C #{fetch(:sidekiq_config)}
 ExecReload=/bin/kill -TSTP $MAINPID
 ExecStop=/bin/kill -TERM $MAINPID
 RestartSec=1
 Restart=on-failure
+
+Environment=MALLOC_ARENA_MAX=2
 
 SyslogIdentifier=sidekiq
 
