@@ -213,7 +213,7 @@ WantedBy=default.target
     comment %{Creating systemctl unit file}
     command %{ mkdir -p #{systemd_path} }
     command %{ touch #{service_path} }
-    command %{ echo "#{ template }" > #{ service_path } }
+    command %{ echo '#{ template }' > #{ service_path } }
     comment %{Reloading systemctl daemon}
     command %{ #{ fetch(:systemctl_command) } daemon-reload }
     comment %{Enabling sidekiq service}
