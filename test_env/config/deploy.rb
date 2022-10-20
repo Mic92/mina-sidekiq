@@ -7,6 +7,9 @@ require 'fileutils'
 FileUtils.mkdir_p "#{Dir.pwd}/deploy"
 
 set :ssh_options, '-o StrictHostKeyChecking=no'
+set :init_system, :systemd
+set :systemctl_command, 'systemctl --user'
+set :service_unit_path, "$HOME/.config/systemd/user"
 
 set :domain, 'localhost'
 set :deploy_to, "#{Dir.pwd}/deploy"
@@ -30,13 +33,12 @@ task :deploy do
     invoke :'bundle:install'
 
     on :launch do
+      invoke :'sidekiq:install'
       invoke :'sidekiq:start'
-      command %(sleep 3; kill -0 `cat #{fetch(:sidekiq_pid)}`)
 
       invoke :'sidekiq:quiet'
 
       invoke :'sidekiq:stop'
-      command %((kill -0 `cat #{fetch(:sidekiq_pid)}`) 2> /dev/null && exit 1 || exit 0)
     end
   end
 end

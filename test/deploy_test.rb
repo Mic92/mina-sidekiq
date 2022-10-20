@@ -15,20 +15,8 @@ describe "mina_sidekiq" do
     system cmd
   end
 
-  def check_process(pid)
-    pid = pid.to_i
-    begin
-      Process.kill(0, pid)
-      return true
-    rescue Errno::EPERM => e
-      puts "No permission to query #{pid}!"
-      raise e
-    rescue Errno::ESRCH
-      puts "#{pid} is NOT running."
-      return false
-    rescue
-      puts "Unable to determine status for #{pid} : #{$!}"
-    end
+  def sidekiq_status
+    `ssh localhost systemctl --user is-active sidekiq-production.service`.strip
   end
 
   describe "setup" do
@@ -49,15 +37,13 @@ describe "mina_sidekiq" do
       end
     end
     it "should start/stop sidekiq" do
-      sidekiq_pid_path = @env_root.join("deploy", "shared", "pids", "sidekiq.pid")
       # fresh deploy
       mina "deploy"
       mina "sidekiq:start"
-      pid = File.read(sidekiq_pid_path)
-      check_process(pid).must_equal true
+      _(sidekiq_status).must_equal "is_active"
       # second deploy
       mina "sidekiq:stop"
-      check_process(pid).must_equal false
+      _(sidekiq_status).wont_equal "is_active"
     end
   end
 end
